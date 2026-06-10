@@ -1,0 +1,14 @@
+{
+  "name": "VOÌLA",
+  "short_name": "VOÌLA",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
