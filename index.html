@@ -1,0 +1,2920 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <meta name="theme-color" content="#000000">
+
+  <title>VoÌla</title>
+</head>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Practice DAW</title>
+
+<style>
+
+body{
+  margin:0;
+  background:#0d0d0d;
+  color:white;
+  font-family:Arial, sans-serif;
+}
+
+.page{
+  display:none;
+  padding:20px;
+  padding-bottom:150px;
+}
+
+.page.active{
+  display:block;
+}
+
+.card{
+  background:#171717;
+  border-radius:24px;
+  padding:22px;
+  margin-top:18px;
+  border:1px solid #2d2d2d;
+  box-shadow:0 0 25px rgba(0,0,0,0.35);
+}
+
+button{
+  background:#262626;
+  color:white;
+  border:none;
+  border-radius:14px;
+  padding:14px 20px;
+  font-size:18px;
+  cursor:pointer;
+}
+
+button:active{
+  transform:scale(0.96);
+}
+
+select,
+input{
+  background:#101010;
+  color:white;
+  border:2px solid #333;
+  border-radius:12px;
+  padding:10px;
+}
+
+#nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  background:#111;
+  padding:18px 0;
+  border-top:1px solid #333;
+}
+
+/* TUNER */
+
+.tunerButtons{
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+#note{
+  text-align:center;
+  font-size:72px;
+  margin-top:20px;
+  font-weight:bold;
+}
+
+#freq{
+  text-align:center;
+  opacity:0.7;
+  font-size:18px;
+  margin-top:10px;
+}
+
+.meterWrap{
+  display:flex;
+  justify-content:center;
+}
+
+#meter{
+  width:320px;
+  height:28px;
+  background:#222;
+  border-radius:999px;
+  position:relative;
+  overflow:hidden;
+  margin-top:30px;
+  border:2px solid #444;
+  box-shadow:
+    inset 0 0 12px rgba(255,255,255,0.04),
+    0 0 12px rgba(0,0,0,0.3);
+}
+
+#meterCenter{
+  position:absolute;
+  left:50%;
+  top:0;
+  width:2px;
+  height:100%;
+  background:white;
+  transform:translateX(-50%);
+}
+
+#needleTuner{
+  width:30px;
+  height:30px;
+  background:white;
+  border-radius:50%;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  transition:transform 0.08s linear;
+  box-shadow:0 0 20px rgba(255,255,255,0.6);
+}
+
+#tunerLabels{
+  display:flex;
+  justify-content:space-between;
+  margin-top:12px;
+  opacity:0.7;
+}
+
+/* METRONOME */
+
+#bpmControls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+}
+
+#bpmInput{
+  width:90px;
+  font-size:34px;
+  text-align:center;
+}
+
+#bpmDisplay{
+  text-align:center;
+  font-size:26px;
+  margin-top:12px;
+  font-weight:bold;
+}
+
+#dial{
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  margin:30px auto;
+  background:radial-gradient(circle at center,#1f1f1f 0%,#101010 70%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px solid #333;
+  box-shadow:
+    inset 0 0 30px rgba(255,255,255,0.03),
+    0 0 20px rgba(0,0,0,0.4);
+}
+
+#pulseDot{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  background:white;
+}
+
+.pulse{
+  animation:beatPulse 0.16s ease-out;
+}
+
+.bigPulse{
+  animation:bigBeatPulse 0.2s ease-out;
+}
+
+@keyframes beatPulse{
+  0%{
+    transform:scale(1);
+    box-shadow:0 0 0 rgba(255,255,255,1);
+  }
+
+  50%{
+    transform:scale(1.8);
+    box-shadow:
+      0 0 30px rgba(255,255,255,1),
+      0 0 60px rgba(255,255,255,0.7);
+  }
+
+  100%{
+    transform:scale(1);
+    box-shadow:0 0 0 rgba(255,255,255,0);
+  }
+}
+
+@keyframes bigBeatPulse{
+  0%{
+    transform:scale(1);
+    box-shadow:0 0 0 rgba(255,255,255,1);
+  }
+
+  50%{
+    transform:scale(2.4);
+    box-shadow:
+      0 0 40px rgba(255,255,255,1),
+      0 0 80px rgba(255,255,255,0.8);
+  }
+
+  100%{
+    transform:scale(1);
+    box-shadow:0 0 0 rgba(255,255,255,0);
+  }
+}
+
+.transport{
+  text-align:center;
+}
+
+.transport select{
+  margin-top:14px;
+  font-size:16px;
+}
+
+input[type="range"]{
+  width:100%;
+  margin-top:10px;
+}
+#weeklyGraphWrap{
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  height:160px;
+  margin-top:10px;
+}
+
+#weeklyGraph{
+  display:flex;
+  align-items:flex-end;
+  width:100%;
+  justify-content:space-between;
+}
+#goalBarWrap {
+  width: 100%;
+  height: 18px;
+  background: #222;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 10px;
+  border: 1px solid #333;
+}
+
+#goalBarFill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(
+    90deg,
+    #ff3b3b,
+    #ffb300,
+    #4caf50
+  );
+  transition: width 0.4s ease;
+}
+
+#splashScreen{
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+#splashScreen img{
+    width:min(80vw,420px);
+    opacity:0;
+    animation:logoFade 3s ease-in-out forwards;
+}
+
+@keyframes logoFade{
+    0%{
+        opacity:0;
+        transform:scale(0.95);
+    }
+
+    20%{
+        opacity:1;
+        transform:scale(1);
+    }
+
+    80%{
+        opacity:1;
+        transform:scale(1);
+    }
+
+    100%{
+        opacity:0;
+        transform:scale(1.03);
+    }
+}
+
+#appTitle{
+    font-family:'Cinzel', serif;
+    font-size:72px;
+    letter-spacing:6px;
+    color:#D4AF37;
+    margin:0;
+}
+
+#tagline{
+    color:#D4AF37;
+    font-family:'Cinzel', serif;
+    letter-spacing:3px;
+    margin-top:10px;
+    opacity:0.85;
+}
+#appTitle{
+  font-family:'Cinzel',serif;
+  font-size:72px;
+  letter-spacing:6px;
+  margin:0;
+}
+
+</style>
+</head>
+
+
+
+<body>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap" rel="stylesheet">
+    <div id="splashScreen">
+    <img src="icon.png" alt="VOÌLA">
+    
+</div>
+</div>
+
+<!-- ================= PRACTICE PAGE ================= -->
+
+<div id="practice" class="page active">
+
+  <!-- TUNER -->
+
+  <h2>🎻 Tuner</h2>
+
+  <div class="card">
+
+    <div class="tunerButtons">
+
+      <button onclick="startTuner()">
+        Enable Microphone
+      </button>
+
+      <button onclick="stopTuner()">
+        Turn Off
+      </button>
+
+    </div>
+
+    <div id="note">--</div>
+
+    <div id="freq">0 Hz</div>
+
+    <div class="meterWrap">
+
+      <div id="meter">
+        <div id="meterCenter"></div>
+        <div id="needleTuner"></div>
+      </div>
+
+    </div>
+
+    <div id="tunerLabels">
+      <span>Flat</span>
+      <span>In Tune</span>
+      <span>Sharp</span>
+    </div>
+
+  </div>
+
+  <!-- METRONOME -->
+
+  <h2 style="margin-top:42px;">
+    🥁 Metronome
+  </h2>
+
+  <div class="card">
+
+    <div id="bpmControls">
+
+      <button id="minusBtn">−</button>
+
+      <input
+        id="bpmInput"
+        type="number"
+        min="20"
+        max="300"
+        value="80"
+      />
+
+      <button id="plusBtn">+</button>
+
+    </div>
+
+    <div id="bpmDisplay">
+      80 BPM
+    </div>
+
+    <div id="dial">
+      <div id="pulseDot"></div>
+    </div>
+
+    <div class="transport">
+
+      <button id="playBtn" onclick="toggleMetro()">
+        ▶
+      </button>
+
+      <br />
+
+      <select id="timeSig">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4" selected>4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+      </select>
+
+      <select id="subdivision" onchange="setSubdivision()">
+
+        <option value="1">
+          ♩ Quarters
+        </option>
+
+        <option value="2">
+          ♪♪ 8ths
+        </option>
+
+        <option value="3">
+          ♪♪♪ Triplets
+        </option>
+
+        <option value="4">
+          ♬ 16ths
+        </option>
+
+      </select>
+
+      <div style="margin-top:18px;">
+
+        <button onclick="tapTempo()">
+          Tap Tempo
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ================= TRAINING PAGE ================= -->
+
+
+
+<div id="training" class="page">
+
+  <!-- DRONE -->
+
+  <h2>🎶 Drone</h2>
+
+  <div class="card">
+
+    <div style="
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    ">
+
+      <!-- VOICE 1 -->
+
+      <div style="
+        display:flex;
+        gap:12px;
+        justify-content:center;
+        flex-wrap:wrap;
+      ">
+
+        <select class="droneNote">
+
+          <option selected>Off</option>
+          <option>C</option>
+          <option>Db</option>
+          <option>D</option>
+          <option>Eb</option>
+          <option>E</option>
+          <option>F</option>
+          <option>Gb</option>
+          <option>G</option>
+          <option>Ab</option>
+          <option>A</option>
+          <option>Bb</option>
+          <option>B</option>
+
+        </select>
+
+        <select class="droneOctave">
+
+          <option>2</option>
+          <option selected>3</option>
+          <option>4</option>
+          <option>5</option>
+
+        </select>
+
+      </div>
+
+      <!-- VOICE 2 -->
+
+      <div style="
+        display:flex;
+        gap:12px;
+        justify-content:center;
+        flex-wrap:wrap;
+      ">
+
+        <select class="droneNote">
+
+          <option selected>Off</option>
+
+          <option>C</option>
+          <option>Db</option>
+          <option>D</option>
+          <option>Eb</option>
+          <option>E</option>
+          <option>F</option>
+          <option>Gb</option>
+          <option>G</option>
+          <option>Ab</option>
+          <option>A</option>
+          <option>Bb</option>
+          <option>B</option>
+
+        </select>
+
+        <select class="droneOctave">
+
+          <option>2</option>
+          <option selected>3</option>
+          <option>4</option>
+          <option>5</option>
+
+        </select>
+
+      </div>
+
+      <!-- VOICE 3 -->
+
+      <div style="
+        display:flex;
+        gap:12px;
+        justify-content:center;
+        flex-wrap:wrap;
+      ">
+
+        <select class="droneNote">
+
+          <option selected>Off</option>
+
+          <option>C</option>
+          <option>Db</option>
+          <option>D</option>
+          <option>Eb</option>
+          <option>E</option>
+          <option>F</option>
+          <option>Gb</option>
+          <option>G</option>
+          <option>Ab</option>
+          <option>A</option>
+          <option>Bb</option>
+          <option>B</option>
+
+        </select>
+
+        <select class="droneOctave">
+
+          <option>2</option>
+          <option selected>3</option>
+          <option>4</option>
+          <option>5</option>
+
+        </select>
+
+      </div>
+
+
+      <button onclick="stopDroneAndReset()">
+  🔇 Stop Drone
+</button>
+    </div>
+
+    <div style="
+      margin-top:24px;
+      text-align:center;
+    ">
+
+   
+
+    </div>
+
+  </div>
+<h2 style="margin-top:42px;">🎯 Scale Challenge</h2>
+
+
+
+<div class="card">
+
+  <div id="challengeText"
+       style="font-size:24px;text-align:center;">
+    Press Generate
+  </div>
+
+  <div style="text-align:center;margin-top:20px;">
+
+    
+  </div>
+
+</div>
+<button onclick="startScaleChallenge()">
+  Start Challenge
+</button>
+
+
+
+<div class="card">
+
+  <h3>🎼 Excerpt Challenge</h3>
+
+  <div id="excerptChallenge">
+    Press Generate
+  </div>
+
+  <button onclick="generateExcerpt()">
+    Generate
+  </button>
+
+</div>
+<div class="card">
+
+  <h3>🎻 Bow Workout</h3>
+
+  <div id="bowWorkout">
+    Press Generate
+  </div>
+
+  <button onclick="generateBowWorkout()">
+    Generate Workout
+  </button>
+
+</div>
+
+  <!-- SCALES -->
+
+  <h2 style="margin-top:42px;">
+    🎻 Viola Scales
+  </h2>
+
+  <div class="card">
+
+  <div style="
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+  ">
+
+    <select id="scaleKey">
+      <option>C</option>
+      <option>Db</option>
+      <option>D</option>
+      <option>Eb</option>
+      <option>E</option>
+      <option>F</option>
+      <option>Gb</option>
+      <option>G</option>
+      <option>Ab</option>
+      <option>A</option>
+      <option>Bb</option>
+      <option>B</option>
+    </select>
+
+    <select id="scaleType">
+      <option value="major">Major</option>
+      <option value="minor">Minor</option>
+    </select>
+
+    <select id="scaleOctaves">
+      <option value="1">1 Octave</option>
+      <option value="2">2 Octaves</option>
+    </select>
+
+    <button onclick="showScale()">Show Scale</button>
+
+  </div>
+
+  <div id="scaleDisplay"
+       style="
+         margin-top:20px;
+         text-align:center;
+         font-size:22px;
+         opacity:0.9;
+       ">
+    Select a key
+  </div>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= SESSION PAGE ================= -->
+
+<div id="session" class="page">
+
+  <div class="card">
+  <h3>📊 Weekly Practice</h3>
+  <div id="weeklyGraph"></div>
+</div>
+  <h2>🎛 Session</h2>
+
+  <h2>⏱ Practice Timer</h2>
+
+<div class="card">
+
+  <div id="timerDisplay"
+       style="font-size:48px;text-align:center;">
+    10:00
+  </div>
+
+  <div style="text-align:center;margin-top:20px;">
+
+    <button onclick="startTimer()">
+      Start
+    </button>
+  
+
+    <button onclick="stopTimer()">
+      Stop
+    </button>
+
+    <button onclick="resetTimer()">
+      Reset
+    </button>
+
+  </div>
+
+</div>
+<select id="sessionLength" onchange="setSessionLength()">
+
+  <option value="300">
+    ⚡ Quick Warmup (5 min)
+  </option>
+
+  <option value="600" selected>
+    🎻 Daily Scales (10 min)
+  </option>
+
+  <option value="900">
+    🎼 Focus Practice (15 min)
+  </option>
+
+  <option value="1800">
+    🎯 Full Session (30 min)
+  </option>
+
+</select>
+
+
+<div class="card">
+
+  <h3>📊 Practice Tracker</h3>
+
+  <div id="todayTime">
+    Today: 0 min
+  </div>
+
+  <div id="totalTime">
+    Total: 0 min
+  </div>
+
+  <div id="sessionCount">
+    Sessions: 0
+  </div>
+
+  <div id="streakCount">
+    🔥 Streak: 0 days
+  </div>
+
+</div>
+
+<div class="card">
+  <h3>🎻 Scale of the Day</h3>
+  <div id="scaleOfDay">Press generate</div>
+
+  <button onclick="generateScaleOfDay()">
+  Generate Scale
+</button>
+
+  <button onclick="startScaleOfDay()">
+    Start Practice
+  </button>
+</div>
+<div id="bestStreak">
+  🏆 Best: 0 days
+</div>
+<div class="card">
+  <h3>🎯 Daily Goal</h3>
+
+  <div id="goalText">0 / 60 min</div>
+
+  <div id="goalBarWrap">
+    <div id="goalBarFill"></div>
+  </div>
+
+</div>
+
+<div class="card">
+
+  <h3>🏅 Badge</h3>
+
+  <div id="badgeText">
+    🎻 Beginner
+  </div>
+
+</div>
+
+  <h3>⭐ Progress</h3>
+
+  <div id="levelText">
+    Level 1
+  </div>
+
+  <div id="xpText">
+    0 XP
+  </div>
+<button onclick="devResetAll()" style="opacity:0.3;font-size:12px;">
+  Dev Reset
+</button>
+</div>
+
+
+<!-- ================= BOTTOM NAV ================= -->
+
+<div id="nav">
+
+  <button onclick="showTab('practice')">🎻</button>
+  <button onclick="showTab('training')">🎼</button>
+  <button onclick="showTab('session')">🎛</button>
+  <button onclick="showTab('songPage')">📖</button>
+  <button onclick="showTab('fingerboard')">🎻</button>
+  
+</div>
+
+
+
+
+<!-- SONG LIST PAGE -->
+<div id="songPage" class="page">
+
+  <header>📖 Sheet Music</header>
+
+<div class="card">
+
+  <input
+    id="sheetSearch"
+    placeholder="🔍 Search sheet music..."
+    oninput="renderSongs()"
+    style="width:100%;margin-bottom:12px;"
+  >
+
+  <select
+    id="sheetSort"
+    onchange="renderSongs()"
+    style="width:100%;"
+  >
+    <option value="asc">
+      A → Z
+    </option>
+
+    <option value="desc">
+      Z → A
+    </option>
+  </select>
+<select
+  id="favoriteFilter"
+  onchange="renderSongs()"
+>
+  <option value="all">
+    All Music
+  </option>
+
+  <option value="favorites">
+    Favorites Only
+  </option>
+</select>
+</div>
+
+</button>
+
+  <!-- SONG LIST -->
+  <div id="songList"></div>
+
+</div>
+<div id="sheetPage" class="page">
+
+  <h2>📖 Sheet Music</h2>
+
+   <iframe
+  id="sheetFrame"
+  style="
+    width:100%;
+    height:90vh;
+    border:none;
+    border-radius:12px;
+    background:white;
+  ">
+</iframe>
+
+
+
+
+  <button onclick="showTab('songPage')">
+    ← Back
+  </button>
+
+  <button onclick="fullscreenPDF()">
+  ⛶ Full Screen PDF
+</button>
+
+<button onclick="openPDFFullscreen()">
+  📖 Open PDF
+</button>
+
+</div>
+
+
+
+  
+
+</div>
+
+
+
+<div id="fingerboard" class="page">
+
+  <h2>🎻 Viola Fingerboard</h2>
+
+  <div class="card">
+
+    <div id="fingerboardDisplay"></div>
+
+  </div>
+</div>
+<div style="font-size:10px;">
+ 
+</div>
+
+<div style="font-size:10px;opacity:.7;">
+  
+</div>
+
+<script>
+</script>
+<script>
+const DEV_MODE = false; 
+
+
+let stats = JSON.parse(localStorage.getItem("stats")) || {
+  
+  today: 0,
+  total: 0,
+  sessions: 0,
+  lastDate: null,
+  streak: 0,
+  bestStreak: 0,
+  goal: 60,   // 👈 only goal (set 60 here if you want)
+  xp: 0,
+  level: 1,
+  history: {}
+};
+if(DEV_MODE){
+
+  const statsRaw = localStorage.getItem("stats");
+
+  if(statsRaw){
+    const statsObj = JSON.parse(statsRaw);
+
+    // optional: wipe only fake/dev history
+    statsObj.history = {};
+
+    localStorage.setItem("stats", JSON.stringify(statsObj));
+  }
+
+  console.log("🔥 DEV MODE ACTIVE: test data cleaned");
+}
+function devResetAll(){
+
+  localStorage.clear();
+
+  stats = {
+    today: 0,
+    total: 0,
+    sessions: 0,
+    lastDate: null,
+    streak: 0,
+    bestStreak: 0,
+    goal: 60,
+    xp: 0,
+    level: 1,
+    history: {}
+  };
+
+  saveStats();
+
+  renderWeeklyGraph();
+  updateStatsUI();
+  updateGoalUI();
+
+  console.log("🔥 DEV RESET COMPLETE");
+}
+const APP_VERSION = "1.0.2";
+const savedVersion = localStorage.getItem("appVersion");
+
+if(DEV_MODE && savedVersion !== APP_VERSION){
+  console.log("🔄 Version changed → clearing old data");
+  localStorage.clear();
+  localStorage.setItem("appVersion", APP_VERSION);
+}
+const defaultSongs = [
+    
+  {
+    name: "Wagner: Tannhauser Overture",
+    difficulty: 5,
+    notes: "excerpt",
+    sheetMusicUrl: "files/WagnerTannhauser.pdf"
+  },
+
+  {
+    name: "Berlioz: Roman Carnival Overture",
+    difficulty: 4,
+    notes: "excerpt",
+    sheetMusicUrl: "files/BerliozRomanCarnival.pdf"
+  },
+
+  {
+    name: "Mendelssohn Scherzo",
+    difficulty: 5,
+    notes: "excerpt",
+    sheetMusicUrl: "files/MidsummerNightsDream.pdf"
+  },
+
+  {
+    name: "Bruckner Symphony No. 4",
+    difficulty: 4,
+    notes: "excerpt",
+    sheetMusicUrl: "files/BrucknerSymphony4.pdf"
+  },
+
+  {
+    name: "Beethoven Symphony No. 5",
+    difficulty: 5,
+    notes: "excerpt",
+    sheetMusicUrl: "files/BeethovenSymphony5.pdf"
+  },
+
+  {
+    name: "Mozart Symphony No. 35",
+    difficulty: 5,
+    notes: "excerpt",
+    sheetMusicUrl: "files/MozartSymphony35.pdf"
+  },
+
+  {
+    name: "Strauss Don Quixote",
+    difficulty: 5,
+    notes: "excerpt",
+    sheetMusicUrl: "files/StraussDonQuixote.pdf"
+  },
+
+  {
+    name: "Kodaly Hary Janos Suite",
+    difficulty: 4,
+    notes: "excerpt",
+    sheetMusicUrl: "files/KodalyHJS.pdf"
+  },
+];
+
+/* ================= AUDIO ================= */
+let sustainedOsc = null;
+let nextBeatTime = 0;
+let showFavoritesOnly = false;
+let sustainedGain = null;
+let audioCtx = null;
+let sessionStartTime = Date.now();
+let activeTimeInterval = null;
+function getAudio(){
+
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  return audioCtx;
+}
+
+/* ================= METRONOME ================= */
+
+let metroInterval = null;
+let bpm = 80;
+let subdivision = 1;
+let holdInterval = null;
+let tapTimes = [];
+
+function updateBpmUI(){
+
+  document.getElementById('bpmDisplay').innerText =
+    bpm + ' BPM';
+
+  document.getElementById('bpmInput').value = bpm;
+}
+
+function clickSound(accent=false,time=null){
+
+  const ctx = getAudio();
+
+  const osc =
+    ctx.createOscillator();
+
+  const gain =
+    ctx.createGain();
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.frequency.value =
+    accent ? 1800 : 1200;
+
+  gain.gain.setValueAtTime(
+    accent ? 0.35 : 0.2,
+    time
+  );
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    time + 0.05
+  );
+
+  osc.start(time);
+  osc.stop(time + 0.05);
+
+  const delay =
+    (time - ctx.currentTime) * 1000;
+
+  setTimeout(()=>{
+    pulse(accent);
+  }, Math.max(0, delay));
+}
+
+
+function pulse(accent=false){
+
+  const dot = document.getElementById('pulseDot');
+
+  dot.classList.remove('pulse','bigPulse');
+
+  void dot.offsetWidth;
+
+  if(accent){
+    dot.classList.add('bigPulse');
+  }
+
+  else{
+    dot.classList.add('pulse');
+  }
+}
+
+let metroScheduler = null;
+let currentStep = 0;
+
+
+function scheduleBeat(){
+
+  const ctx = getAudio();
+
+  while(
+    nextBeatTime <
+    ctx.currentTime + 0.1
+  ){
+
+    const beatsPerMeasure =
+      parseInt(
+        document.getElementById("timeSig").value
+      );
+
+    const totalSteps =
+      beatsPerMeasure * subdivision;
+
+    const isDownbeat =
+      currentStep === 0;
+
+    clickSound(
+      isDownbeat,
+      nextBeatTime
+    );
+
+    currentStep++;
+
+    if(currentStep >= totalSteps){
+      currentStep = 0;
+    }
+
+    nextBeatTime +=
+      (60 / bpm) / subdivision;
+  }
+}
+
+function startMetro(){
+
+  const ctx = getAudio();
+
+  nextBeatTime =
+    ctx.currentTime + 0.05;
+
+  currentStep = 0;
+
+  metroScheduler =
+    setInterval(scheduleBeat,25);
+}
+
+function toggleMetro(){
+
+  const btn =
+    document.getElementById("playBtn");
+
+  if(metroScheduler){
+
+    clearInterval(metroScheduler);
+
+    metroScheduler = null;
+
+    btn.innerText = "▶";
+
+    return;
+  }
+
+  startMetro();
+
+  btn.innerText = "⏸";
+}
+function setSubdivision(){
+
+  subdivision = parseInt(
+    document.getElementById('subdivision').value
+  );
+}
+
+function tapTempo(){
+
+  const now = Date.now();
+
+  tapTimes.push(now);
+
+  if(tapTimes.length > 5){
+    tapTimes.shift();
+  }
+
+  if(tapTimes.length >= 2){
+
+    let total = 0;
+
+    for(let i=1;i<tapTimes.length;i++){
+      total += tapTimes[i] - tapTimes[i-1];
+    }
+
+    const avg = total / (tapTimes.length - 1);
+
+    bpm = Math.round(60000 / avg);
+
+    bpm = Math.max(20, Math.min(300, bpm));
+
+    updateBpmUI();
+  }
+}
+
+function changeBpm(amount){
+
+  bpm += amount;
+
+  bpm = Math.max(20, Math.min(300, bpm));
+
+  updateBpmUI();
+}
+
+function startHold(amount){
+
+  changeBpm(amount);
+
+  clearInterval(holdInterval);
+
+  holdInterval = setInterval(()=>{
+    changeBpm(amount);
+  },60);
+}
+
+function stopHold(){
+  clearInterval(holdInterval);
+}
+
+/* ================= BUTTON EVENTS ================= */
+
+window.addEventListener('DOMContentLoaded', ()=>{
+
+  updateBpmUI();
+
+  document.getElementById('plusBtn')
+  .addEventListener('mousedown', ()=>{
+    startHold(1);
+  });
+
+  document.getElementById('minusBtn')
+  .addEventListener('mousedown', ()=>{
+    startHold(-1);
+  });
+
+  document.addEventListener('mouseup', stopHold);
+
+  document.getElementById('bpmInput')
+  .addEventListener('change', ()=>{
+
+    let value = parseInt(
+      document.getElementById('bpmInput').value
+    );
+
+    if(isNaN(value)) return;
+
+    bpm = Math.max(20, Math.min(300, value));
+
+    updateBpmUI();
+
+
+  });
+  renderFingerboard();
+updateTimer();
+updateStatsUI();
+});
+
+/* ================= DRONE ================= */
+
+let droneOscs = [];
+let droneOn = false;
+
+const droneMap = {
+  C:130.81,
+  Db:138.59,
+  D:146.83,
+  Eb:155.56,
+  E:164.81,
+  F:174.61,
+  Gb:185.00,
+  G:196.00,
+  Ab:207.65,
+  A:220.00,
+  Bb:233.08,
+  B:246.94
+};
+
+function getDroneFreq(note, octave){
+  let freq = droneMap[note];
+  return freq * Math.pow(2, octave - 3);
+}
+
+function stopDrone(){
+droneOn = false;
+  droneOscs.forEach(o=>{
+    try{
+      o.stop();
+      o.disconnect();
+    }catch(e){}
+  });
+
+  droneOscs = [];
+  droneOn = false;
+}
+function stopDroneAndReset(){
+
+  stopDrone();
+
+  document.querySelectorAll(".droneNote")
+  .forEach(select=>{
+    select.value = "Off";
+  });
+
+}
+
+function createRichDrone(freq){
+
+  const ctx = getAudio();
+
+  const o1 = ctx.createOscillator();
+  const o2 = ctx.createOscillator();
+  const o3 = ctx.createOscillator();
+
+  const g = ctx.createGain();
+  const f = ctx.createBiquadFilter();
+
+  o1.type = "sawtooth";
+  o2.type = "triangle";
+  o3.type = "sine";
+
+  o1.frequency.value = freq;
+  o2.frequency.value = freq * 0.997;
+  o3.frequency.value = freq * 2;
+
+  f.type = "lowpass";
+  f.frequency.value = 1200;
+
+  g.gain.value = 0.05;
+
+  o1.connect(f);
+  o2.connect(f);
+  o3.connect(f);
+
+  f.connect(g);
+  g.connect(ctx.destination);
+
+  o1.start();
+  o2.start();
+  o3.start();
+
+  droneOscs.push(o1,o2,o3);
+}
+
+function buildDrone(){
+
+  const notes =
+    document.querySelectorAll(".droneNote");
+
+  const octs =
+    document.querySelectorAll(".droneOctave");
+
+  let activeNotes = 0;
+
+  for(let i=0;i<notes.length;i++){
+
+    const note = notes[i].value;
+    const octave = parseInt(octs[i].value);
+
+    if(note === "Off") continue;
+
+    activeNotes++;
+
+    createRichDrone(
+      getDroneFreq(note, octave)
+    );
+  }
+
+  droneOn = activeNotes > 0;
+}
+
+function toggleDrone(){
+
+  if(droneOn){
+    stopDrone();
+    return;
+  }
+
+  buildDrone();
+  droneOn = true;
+}
+
+function refreshDrone(){
+
+  if(!droneOn) return;
+
+  stopDrone();
+  buildDrone(); // FIXED (was broken before)
+}
+
+/* auto update */
+document.querySelectorAll(".droneNote,.droneOctave")
+.forEach(el=>{
+
+  el.addEventListener("change", ()=>{
+
+    const ctx = getAudio();
+
+    if(ctx.state === "suspended"){
+      ctx.resume();
+    }
+
+    stopDrone();
+
+    buildDrone();
+
+  });
+
+});
+
+/* ================= TUNER ================= */
+
+let tunerStream = null;
+let tunerAudioContext = null;
+let analyser = null;
+let dataArray = null;
+let tunerRunning = false;
+let tunerAnimation = null;
+
+const noteStrings = [
+  "C","C#","D","Eb","E","F",
+  "F#","G","Ab","A","Bb","B"
+];
+
+function autoCorrelate(buffer, sampleRate){
+
+  let SIZE = buffer.length;
+
+  let rms = 0;
+
+  for(let i=0;i<SIZE;i++){
+    let val = buffer[i];
+    rms += val * val;
+  }
+
+  rms = Math.sqrt(rms / SIZE);
+
+  if(rms < 0.01) return -1;
+
+  let r1 = 0;
+  let r2 = SIZE - 1;
+  const threshold = 0.2;
+
+  for(let i=0;i<SIZE/2;i++){
+    if(Math.abs(buffer[i]) < threshold){
+      r1 = i;
+      break;
+    }
+  }
+
+  for(let i=1;i<SIZE/2;i++){
+    if(Math.abs(buffer[SIZE-i]) < threshold){
+      r2 = SIZE - i;
+      break;
+    }
+  }
+
+  buffer = buffer.slice(r1,r2);
+  SIZE = buffer.length;
+
+  let c = new Array(SIZE).fill(0);
+
+  for(let i=0;i<SIZE;i++){
+    for(let j=0;j<SIZE-i;j++){
+      c[i] += buffer[j] * buffer[j+i];
+    }
+  }
+
+  let d = 0;
+
+  while(c[d] > c[d+1]) d++;
+
+  let maxval = -1;
+  let maxpos = -1;
+
+  for(let i=d;i<SIZE;i++){
+    if(c[i] > maxval){
+      maxval = c[i];
+      maxpos = i;
+    }
+  }
+
+  let T0 = maxpos;
+
+  return sampleRate / T0;
+}
+
+function noteFromPitch(frequency){
+
+  const noteNum =
+    12 * (Math.log(frequency / 440) / Math.log(2));
+
+  return Math.round(noteNum) + 69;
+}
+
+function frequencyFromNoteNumber(note){
+  return 440 * Math.pow(2,(note-69)/12);
+}
+
+function centsOff(frequency,note){
+
+  return Math.floor(
+    1200 * Math.log(frequency / frequencyFromNoteNumber(note))
+    / Math.log(2)
+  );
+}
+
+async function startTuner(){
+
+  if(tunerRunning) return;
+
+  try{
+
+    tunerStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio:true
+      });
+
+    tunerAudioContext =
+      new (window.AudioContext || window.webkitAudioContext)();
+
+    const source =
+      tunerAudioContext.createMediaStreamSource(tunerStream);
+
+    analyser =
+      tunerAudioContext.createAnalyser();
+
+    analyser.fftSize = 2048;
+
+    source.connect(analyser);
+
+    dataArray =
+      new Float32Array(analyser.fftSize);
+
+    tunerRunning = true;
+
+    
+  
+
+
+await tunerAudioContext.resume(); // 🔥 THIS IS REQUIRED
+  }
+
+  catch(err){
+    alert("Microphone access denied or unavailable.");
+  }
+  updateTuner();
+}
+
+
+function updateTuner(){
+
+  console.log(dataArray.slice(0, 5));
+  if(!tunerRunning) return;
+
+  analyser.getFloatTimeDomainData(dataArray);
+
+  const pitch =
+    autoCorrelate(dataArray, tunerAudioContext.sampleRate);
+
+  const noteDisplay = document.getElementById('note');
+  const freqDisplay = document.getElementById('freq');
+  const needle = document.getElementById('needleTuner');
+
+  if(pitch !== -1){
+
+    const note = noteFromPitch(pitch);
+    const noteName = noteStrings[note % 12];
+    const detune = centsOff(pitch,note);
+
+    noteDisplay.innerText = noteName;
+    freqDisplay.innerText =
+  `${pitch.toFixed(1)} Hz | ${detune > 0 ? "+" : ""}${detune} cents`;
+
+    let clamped = Math.max(-50, Math.min(50, detune));
+    let x = clamped * 2.5;
+
+    needle.style.transform =
+      `translate(calc(-50% + ${x}px), -50%)`;
+
+  } else {
+    noteDisplay.innerText = '--';
+    freqDisplay.innerText = '0 Hz';
+    needle.style.transform = 'translate(-50%, -50%)';
+  }
+
+  tunerAnimation = requestAnimationFrame(updateTuner);
+}
+
+function stopTuner(){
+
+  tunerRunning = false;
+  cancelAnimationFrame(tunerAnimation);
+
+  if(tunerStream){
+    tunerStream.getTracks().forEach(track=>track.stop());
+    tunerStream = null;
+  }
+
+  document.getElementById('note').innerText = '--';
+  document.getElementById('freq').innerText = '0 Hz';
+  document.getElementById('needleTuner').style.transform =
+    'translate(-50%, -50%)';
+}
+
+/* ================= SCALES ================= */
+
+const scales = {
+  major: {
+    C:["C","D","E","F","G","A","B","C"],
+    Db:["Db","Eb","F","Gb","Ab","Bb","C","Db"],
+    D:["D","E","F#","G","A","B","C#","D"],
+    Eb:["Eb","F","G","Ab","Bb","C","D","Eb"],
+    E:["E","F#","G#","A","B","C#","D#","E"],
+    F:["F","G","A","Bb","C","D","E","F"],
+    Gb:["Gb","Ab","Bb","Cb","Db","Eb","F","Gb"],
+    G:["G","A","B","C","D","E","F#","G"],
+    Ab:["Ab","Bb","C","Db","Eb","F","G","Ab"],
+    A:["A","B","C#","D","E","F#","G#","A"],
+    Bb:["Bb","C","D","Eb","F","G","A","Bb"],
+    B:["B","C#","D#","E","F#","G#","A#","B"]
+  },
+
+  minor: {
+    C:["C","D","Eb","F","G","Ab","Bb","C"],
+    Db:["Db","Eb","Fb","Gb","Ab","Bbb","Cb","Db"],
+    D:["D","E","F","G","A","Bb","C","D"],
+    Eb:["Eb","F","Gb","Ab","Bb","Cb","Db","Eb"],
+    E:["E","F#","G","A","B","C","D","E"],
+    F:["F","G","Ab","Bb","C","Db","Eb","F"],
+    Gb:["Gb","Ab","Bbb","Cb","Db","Ebb","Fb","Gb"],
+    G:["G","A","Bb","C","D","Eb","F","G"],
+    Ab:["Ab","Bb","Cb","Db","Eb","Fb","Gb","Ab"],
+    A:["A","B","C","D","E","F","G","A"],
+    Bb:["Bb","C","Db","Eb","F","Gb","Ab","Bb"],
+    B:["B","C#","D","E","F#","G","A","B"]
+  }
+};
+
+function showScale(){
+
+  const key = document.getElementById("scaleKey").value;
+  const type = document.getElementById("scaleType").value;
+  const octaves = parseInt(
+    document.getElementById("scaleOctaves").value
+  );
+
+  const scale = scales[type][key];
+
+  if(!scale){
+    document.getElementById("scaleDisplay").innerText =
+      "Scale not found";
+    return;
+  }
+
+  let result = [];
+
+  for(let i = 0; i < octaves; i++){
+    const part =
+      (i === 0) ? scale : scale.slice(0,-1);
+
+    result = result.concat(part);
+  }
+
+let arpeggio;
+
+if(type === "major"){
+  arpeggio = [scale[0], scale[2], scale[4], scale[7]];
+} else {
+  arpeggio = [scale[0], scale[2], scale[4], scale[7]];
+}
+
+// IMPORTANT: normalize properly
+highlightedNotes = arpeggio.map(n => normalizeNote(n));
+
+renderFingerboard();
+
+  renderFingerboard();
+
+  document.getElementById("scaleDisplay").innerText =
+    result.join(" - ");
+}
+
+function getScaleOctaves(scale, octaves){
+
+  let result = [];
+
+  for(let i = 0; i < octaves; i++){
+
+    // for last note, avoid duplicating root too many times
+    const part = (i === 0)
+      ? scale
+      : scale.slice(0, -1);
+
+    result = result.concat(part);
+  }
+
+  return result;
+}
+
+/* ================= TABS (FIXED - SINGLE VERSION) ================= */
+
+function showTab(tabId){
+
+  document.querySelectorAll('.page').forEach(page=>{
+    page.classList.remove('active');
+  });
+
+  const selected = document.getElementById(tabId);
+
+  if(selected){
+    selected.classList.add('active');
+  }
+
+  // 🔥 ADD THIS
+  if(tabId === "session"){
+    renderWeeklyGraph();
+    updateStatsUI();
+  }
+}
+
+
+
+
+
+let songs =
+  JSON.parse(localStorage.getItem("songs"));
+
+if(!songs){
+
+  songs = [...defaultSongs];
+
+  localStorage.setItem(
+    "songs",
+    JSON.stringify(songs)
+  );
+}
+
+function renderSongs(){
+
+  const list =
+    document.getElementById("songList");
+
+  list.innerHTML = "";
+
+  const search =
+    document.getElementById("sheetSearch")?.value
+      .toLowerCase() || "";
+
+  const sort =
+    document.getElementById("sheetSort")?.value || "asc";
+
+  const favoriteFilter =
+    document.getElementById("favoriteFilter")?.value || "all";
+
+  let filteredSongs = songs
+    .map((song,index)=>({
+      ...song,
+      originalIndex:index
+    }));
+
+  filteredSongs = filteredSongs.filter(song =>
+    song.name.toLowerCase().includes(search)
+  );
+
+  if(favoriteFilter === "favorites"){
+    filteredSongs =
+      filteredSongs.filter(song => song.favorite);
+  }
+
+  filteredSongs.sort((a,b)=>{
+
+    if(sort === "asc"){
+      return a.name.localeCompare(b.name);
+    }
+
+    return b.name.localeCompare(a.name);
+
+  });
+
+ filteredSongs.forEach(song => {
+
+  const realIndex = song.originalIndex;
+
+  list.innerHTML += `
+    <div class="card">
+
+      <h3>${song.name}</h3>
+
+      <button onclick="toggleFavorite(${realIndex})">
+        ${song.favorite ? "⭐" : "☆"}
+      </button>
+
+      <p>Difficulty: ${song.difficulty}</p>
+
+      <p>${song.notes}</p>
+
+      <button onclick="openSheetMusic(${realIndex})">
+        📖 Sheet Music
+      </button>
+
+      <button onclick="deleteSong(${realIndex})">
+        🗑 Delete
+      </button>
+
+    </div>
+  `;
+});
+}
+function toggleFavorite(index){
+
+  songs[index].favorite =
+    !songs[index].favorite;
+
+  localStorage.setItem(
+    "songs",
+    JSON.stringify(songs)
+  );
+
+  renderSongs();
+}
+function toggleFavoritesFilter(){
+
+  showFavoritesOnly = !showFavoritesOnly;
+
+  renderSongs();
+}
+function openSheetMusic(index){
+
+  const song = songs[index];
+
+  if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+    window.location.href = song.sheetMusicUrl;
+    return;
+  }
+
+  document.getElementById("sheetFrame").src =
+    song.sheetMusicUrl;
+
+  showTab("sheetPage");
+}
+
+
+
+  showTab("practice");
+
+  updateBpmUI();
+
+  renderSongs();
+
+
+function deleteSong(index){
+
+  if(!confirm("Delete this song?")){
+    return;
+  }
+
+  songs.splice(index,1);
+
+  localStorage.setItem(
+    "songs",
+    JSON.stringify(songs)
+  );
+
+  renderSongs();
+}
+
+let appStartTime = Date.now();
+let activeMinutesToday = 0;
+let lastTick = Date.now();
+function saveStats(){
+  localStorage.setItem("stats", JSON.stringify(stats));
+}
+function updateStatsUI(){
+
+  document.getElementById("todayTime").innerText =
+    `Today: ${Math.floor(stats.today)} min`;
+
+  document.getElementById("totalTime").innerText =
+    `Total: ${Math.floor(stats.total)} min`;
+
+  document.getElementById("sessionCount").innerText =
+    `Sessions: ${stats.sessions}`;
+
+  document.getElementById("streakCount").innerText =
+  `🔥 Streak: ${stats.streak} days`;
+
+document.getElementById("bestStreak").innerText =
+  `🏆 Best: ${stats.bestStreak} days`;
+
+}
+
+function logSession(minutes){
+
+  stats.today += minutes;
+  stats.total += minutes;
+  stats.sessions += 1;
+
+  saveStats();
+  updateStatsUI();
+  updateGoalUI();
+}
+
+
+/* ================= TIMER ================= */
+
+let timerInterval = null;
+let timerSeconds = 600;
+
+function updateTimer(){
+
+  const minutes = Math.floor(timerSeconds / 60);
+  const seconds = timerSeconds % 60;
+
+  document.getElementById("timerDisplay").innerText =
+    `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+}
+
+function startTimer(){
+
+  if(timerInterval) return;
+
+  timerInterval = setInterval(()=>{
+
+  timerSeconds--;
+
+  updateTimer();
+
+  addPracticeMinutes(1/60);
+
+  updateGoalUI(); // add this
+
+  if(timerSeconds <= 0){
+
+    stopTimer();
+
+    stats.sessions += 1;
+
+    saveStats();
+
+    updateStatsUI();
+    updateGoalUI();
+
+    alert("Practice session complete!");
+  }
+
+},1000);
+}
+function stopTimer(){
+
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function setSessionLength(){
+
+  timerSeconds =
+    parseInt(document.getElementById("sessionLength").value);
+
+  updateTimer();
+}
+
+function resetTimer(){
+
+  stopTimer();
+
+  timerSeconds =
+    parseInt(
+      document.getElementById("sessionLength").value
+    ) || 600;
+
+  updateTimer();
+}
+
+let activeChallenge = null;
+
+function startScaleChallenge(){
+
+  const keys = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+  const types = ["major","minor"];
+  const octaves = [1,2,3];
+
+  const key = keys[Math.floor(Math.random()*keys.length)];
+  const type = types[Math.floor(Math.random()*types.length)];
+  const oct = octaves[Math.floor(Math.random()*octaves.length)];
+
+  const scale = scales[type][key];
+
+  activeChallenge = {
+    key,
+    type,
+    oct,
+    answer: getScaleOctaves(scale, oct)
+  };
+
+  document.getElementById("challengeText").innerHTML =
+    `🎯 <strong>${key} ${type.toUpperCase()}</strong><br>
+     ${oct} octave${oct>1 ? "s" : ""}<br>
+     Try to play it!`;
+
+  resetTimer();
+  timerSeconds = 60; // optional challenge timer
+  updateTimer();
+  startTimer();
+}
+let highlightedNotes = [];
+function revealChallenge(){
+
+  if(!activeChallenge){
+    document.getElementById("challengeText").innerText =
+      "Start a challenge first";
+    return;
+  }
+
+  document.getElementById("challengeText").innerText =
+    activeChallenge.answer.join(" - ");
+
+}
+const violaStrings = {
+  A: [
+    "A4","Bb4","B4","C5","Db5","D5","Eb5","E5",
+    "F5","Gb5","G5","Ab5","A5"
+  ],
+
+  D: [
+    "D4","Eb4","E4","F4","Gb4","G4","Ab4","A4",
+    "Bb4","B4","C5","Db5","D5"
+  ],
+
+  G: [
+    "G3","Ab3","A3","Bb3","B3","C4","Db4","D4",
+    "Eb4","E4","F4","Gb4","G4"
+  ],
+
+  C: [
+    "C3","Db3","D3","Eb3","E3","F3","Gb3","G3",
+    "Ab3","A3","Bb3","B3","C4"
+  ]
+};
+
+const enharmonicMap = {
+  "Bbb": "A",
+  "Ebb": "D",
+  "Abb": "Gb",
+  "Dbb": "C",
+  "Gbb": "F",
+  "Cbb": "Bb"
+};
+function normalizeNote(note){
+  return note.replace(/[0-9]/g, "")
+             .replace("C#", "Db")
+             .replace("D#", "Eb")
+             .replace("F#", "Gb")
+             .replace("G#", "Ab")
+             .replace("A#", "Bb");
+}
+
+
+
+function renderFingerboard(){
+
+  const div =
+    document.getElementById("fingerboardDisplay");
+
+  let html = "";
+
+  Object.keys(violaStrings).forEach(stringName=>{
+
+    html += `
+      <div style="margin-bottom:20px;">
+        <strong>${stringName} String</strong>
+
+        <div style="
+         display:grid;
+        grid-template-columns:
+        repeat(auto-fit,minmax(55px,1fr));
+          gap:6px;
+          margin-top:8px;
+        ">
+    `;
+
+    violaStrings[stringName].forEach(note=>{
+
+ const noteName = normalizeNote(note);
+
+const highlighted =
+  highlightedNotes.includes(noteName);
+
+html += `
+  <button
+    onclick="playFingerboardNote('${note}')"
+    style="
+      min-width:60px;
+      background:${highlighted ? '#4caf50' : '#262626'};
+      border:${highlighted ? '2px solid #7cff8a' : 'none'};
+    ">
+    ${note}
+  </button>
+`;
+});
+    html += `
+        </div>
+      </div>
+    `;
+  });
+
+  div.innerHTML = html;
+}
+function midiToFreq(midi){
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+function midiToNote(midi){
+  const noteNames = [
+    "C","C#","D","Eb","E","F",
+    "F#","G","Ab","A","Bb","B"
+  ];
+
+  const note = noteNames[midi % 12];
+  const octave = Math.floor(midi / 12) - 1;
+
+  return note + octave;
+}
+function playMidiNote(midi){
+
+  const ctx = getAudio();
+
+  const freq = midiToFreq(midi);
+
+  const osc1 = ctx.createOscillator();
+  const osc2 = ctx.createOscillator();
+  const osc3 = ctx.createOscillator();
+
+  const gain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+
+  osc1.type = "sawtooth";
+  osc2.type = "triangle";
+  osc3.type = "sine";
+
+  osc1.frequency.value = freq;
+  osc2.frequency.value = freq * 0.997;
+  osc3.frequency.value = freq * 2;
+
+  filter.type = "lowpass";
+
+  // darker tone on lower strings
+  filter.frequency.value =
+    freq < 220 ? 1200 : 2500;
+
+  // boost low notes
+  gain.gain.value =
+    freq < 220 ? 0.25 : 0.15;
+
+  osc1.connect(filter);
+  osc2.connect(filter);
+  osc3.connect(filter);
+
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc1.start();
+  osc2.start();
+  osc3.start();
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    ctx.currentTime + 1.5
+  );
+
+  osc1.stop(ctx.currentTime + 1.5);
+  osc2.stop(ctx.currentTime + 1.5);
+  osc3.stop(ctx.currentTime + 1.5);
+}
+const openStrings = {
+  A: 69, // A4
+  D: 62, // D4
+  G: 55, // G3
+  C: 48  // C3
+};
+
+const noteNames = [
+  "C","C#","D","Eb","E","F",
+  "F#","G","Ab","A","Bb","B"
+];
+
+function testMidi(){
+  console.log(midiToNote(48));
+  console.log(midiToNote(55));
+  console.log(midiToNote(62));
+  console.log(midiToNote(69));
+}
+function noteToMidi(note){
+
+  const names = {
+    C:0,
+    "C#":1,
+    Db:1,
+    D:2,
+    Eb:3,
+    E:4,
+    F:5,
+    "F#":6,
+    Gb:6,
+    G:7,
+    Ab:8,
+    A:9,
+    Bb:10,
+    B:11
+  };
+
+const match = note.match(/^([A-G][b#]?)(\d)$/);
+
+if(!match){
+  console.error("Bad note:", note);
+  return 60;
+}
+
+const pitch = match[1];
+const octave = parseInt(match[2]);
+
+return (octave + 1) * 12 + names[pitch];
+
+}
+
+function playFingerboardNote(note){
+
+  playMidiNote(
+    noteToMidi(note)
+  );
+}
+function playMidiNote(midi){
+
+  const ctx = getAudio();
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+
+  const freq = midiToFreq(midi);
+
+  osc.frequency.value = freq;
+  osc.type = "sawtooth";
+
+  filter.type = "lowpass";
+  filter.frequency.value = 2000;
+
+  // Boost lower notes a little
+  gain.gain.value = freq < 220 ? 0.25 : 0.15;
+
+  osc.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    ctx.currentTime + 1.5
+  );
+
+  osc.stop(ctx.currentTime + 1.5);
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  renderFingerboard();
+
+});
+let todaysScale = null;
+
+
+
+function generateScaleOfDay(){
+
+  const keys = ["C","D","Eb","F","G","A","Bb"];
+  const types = ["major","minor"];
+  const octaves = [1,2];
+
+  const key = keys[Math.floor(Math.random()*keys.length)];
+  const type = types[Math.floor(Math.random()*types.length)];
+  const oct = octaves[Math.floor(Math.random()*octaves.length)];
+
+  const scale = scales[type][key];
+
+  todaysScale = {
+    key,
+    type,
+    oct,
+    notes: getScaleOctaves(scale, oct)
+  };
+
+  const el = document.getElementById("scaleOfDay");
+
+  if(!el){
+    console.error("scaleOfDay element not found");
+    return;
+  }
+
+  el.innerHTML =
+    `🎯 <strong>${key} ${type.toUpperCase()}</strong><br>
+     ${oct} octave(s)<br>
+     Goal: clean intonation + steady bow`;
+}
+function startScaleOfDay(){
+
+  if(!todaysScale){
+    alert("Generate a scale first");
+    return;
+  }
+
+  activeChallenge = todaysScale;
+
+  document.getElementById("challengeText").innerHTML =
+    `🎻 Practicing: <strong>${todaysScale.key} ${todaysScale.type}</strong>`;
+
+  resetTimer();
+  timerSeconds = 300;
+  updateTimer();
+  startTimer();
+}
+function saveScaleOfDay(scale){
+  localStorage.setItem("scaleOfDay", JSON.stringify(scale));
+}
+
+function loadScaleOfDay(){
+  const saved = localStorage.getItem("scaleOfDay");
+  if(saved){
+    todaysScale = JSON.parse(saved);
+  }
+  
+}
+
+function addPracticeMinutes(minutes){
+
+  stats.today += minutes;
+  stats.total += minutes;
+  stats.xp += minutes * 2;
+
+  const key = getTodayKey();
+
+  if(!stats.history[key]){
+    stats.history[key] = 0;
+  }
+
+  stats.history[key] += minutes;
+
+  saveStats();
+  updateStatsUI();
+  updateXPUI();
+
+  renderWeeklyGraph(); // ← add this
+}
+
+
+window.addEventListener("DOMContentLoaded", () => {
+console.log(typeof startAppTracking);
+console.log("Page loaded");
+
+  showTab('practice');
+
+  updateBpmUI();
+  
+  setSessionLength();
+
+  renderSongs();
+  renderFingerboard();
+
+  loadScaleOfDay();
+console.log("About to start tracker");
+
+
+updateGoalUI();
+ checkNewDay();
+checkNewWeek();
+updateStatsUI();
+updateXPUI();
+renderWeeklyGraph();
+
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    lastTick = Date.now(); // reset baseline
+  }
+});
+function getTodayKey(){
+  return getDateKey(new Date());
+}
+const weekdayNames = [
+  "Sun","Mon","Tue","Wed",
+  "Thu","Fri","Sat"
+];
+
+function updateStreak(){
+
+  const today = getDateKey();
+
+  const last = stats.lastPracticeDate;
+
+  // first ever run
+  if(!last){
+    stats.streak = 1;
+    stats.lastPracticeDate = today;
+    stats.bestStreak = Math.max(stats.bestStreak || 0, 1);
+    saveStats();
+    return;
+  }
+
+  // already counted today → do nothing
+  if(last === today) return;
+
+  const lastDate = new Date(last);
+  const todayDate = new Date(today);
+
+  const diffDays =
+    Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+
+  if(diffDays === 1){
+    // continued streak
+    stats.streak = (stats.streak || 0) + 1;
+  } else {
+    // broken streak
+    stats.streak = 1;
+  }
+
+  stats.bestStreak = Math.max(stats.bestStreak || 0, stats.streak);
+
+  stats.lastPracticeDate = today;
+
+  saveStats();
+}
+function updateGoalUI(){
+
+  const goal = stats.goal || 60;
+
+  const displayedMinutes =
+    Math.min(stats.today, goal);
+
+  const progress =
+    Math.min(stats.today / goal, 1);
+
+  const fill =
+    document.getElementById("goalBarFill");
+
+  if(fill){
+    fill.style.width =
+      (progress * 100) + "%";
+  }
+
+  const text =
+    document.getElementById("goalText");
+
+  if(text){
+    text.innerText =
+      `${displayedMinutes.toFixed(1)} / ${goal} min`;
+  }
+}
+function calculateLevel(){
+
+  stats.level =
+    Math.floor(stats.xp / 100) + 1;
+}
+function updateXPUI(){
+
+  calculateLevel();
+
+  document.getElementById("levelText").innerText =
+    `Level ${stats.level}`;
+
+  document.getElementById("xpText").innerText =
+    `${Math.floor(stats.xp)} XP`;
+
+  document.getElementById("badgeText").innerText =
+    getCurrentBadge();
+}
+function generateExcerpt(){
+
+  const excerpts = [
+    "Wagner - Tannhauser Overture",
+    "Berlioz - Roman Carnival",
+    "Mendelssohn - Scherzo",
+    "Bruckner - Symphony No. 4",
+    "Beethoven - Symphony No. 5",
+    "Strauss - Don Quixote",
+    "Mozart - Symphony No. 35",
+    "Mozart - Symphony No. 40",
+    "Strauss - Don Juan",
+    "Strauss - Ein Heldenleben",
+    "Shostakovich - Symphony No. 5",
+    "Mahler - Symphony No. 1",
+    "Mahler - Symphony No. 5",
+    "Dvorak - Symphony No. 9"
+  ];
+
+  const choice =
+    excerpts[Math.floor(Math.random() * excerpts.length)];
+
+  document.getElementById("excerptChallenge").innerText =
+    choice;
+}
+const bowings = [
+
+  "Detache",
+  "Legato",
+  "Martelé",
+  "Spiccato",
+  "Sautillé",
+  "Collé",
+  "Staccato"
+
+];
+
+
+function generateBowWorkout(){
+
+  const workouts = [
+
+    "🎯 Open C String • Whole bows • 60 BPM • 2 min",
+
+    "🎯 Open G String • Half bows • 80 BPM • 2 min",
+
+    "🎯 Long tones • 8 counts per bow • Focus on straight bow",
+
+    "🎯 Crescendo then diminuendo on each bow",
+
+    "🎯 String crossings: C-G-C-G • Quarter notes • 80 BPM",
+
+    "🎯 Martelé strokes • 4 notes per bow",
+
+    "🎯 Detaché • Full bow • 100 BPM",
+
+    "🎯 Spiccato on open D • 16th notes • 60 BPM",
+
+    "🎯 Dynamics ladder: pp → p → mp → mf → f → ff",
+
+    "🎯 Scale of choice • Slur 4 notes per bow"
+
+  ];
+
+  const workout =
+    workouts[Math.floor(Math.random() * workouts.length)];
+
+  document.getElementById("bowWorkout").innerText =
+    workout;
+}
+function resetWeeklyStats(){
+  stats.history = {};     // clears graph data
+  saveStats();
+  renderWeeklyGraph();
+  updateStatsUI();
+  console.log("📊 Weekly stats reset");
+}
+function checkNewWeek(){
+  const today = new Date();
+  stats.lastWeek = getWeekKey(today);
+  saveStats();
+}
+function getWeekKey(date = new Date()){
+  const d = new Date(date);
+  const start = new Date(d.setDate(d.getDate() - d.getDay()));
+  return start.toISOString().split("T")[0];
+}
+function checkNewDay(){
+
+  const today = getDateKey();
+
+  // first launch
+  if(!stats.lastDate){
+
+    stats.lastDate = today;
+
+    saveStats();
+    return;
+  }
+
+  // actual day change
+  if(stats.lastDate !== today){
+
+    stats.today = 0;
+
+    stats.lastDate = today;
+
+    saveStats();
+  }
+  if(!stats.history){
+  stats.history = {};
+}
+
+if(!stats.history[today]){
+  stats.history[today] = 0;
+}
+}
+function getDateKey(date = new Date()){
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2,"0");
+  const day = String(date.getDate()).padStart(2,"0");
+
+  return `${year}-${month}-${day}`;
+}
+function renderWeeklyGraph(){
+
+  const graph =
+    document.getElementById("weeklyGraph");
+
+  if(!graph) return;
+
+  graph.innerHTML = "";
+
+  const days = [];
+
+  const weekdayNames = [
+    "Sun","Mon","Tue",
+    "Wed","Thu","Fri","Sat"
+  ];
+
+  const today = new Date();
+
+  for(let i = 6; i >= 0; i--){
+
+    const d = new Date(today);
+
+    d.setDate(today.getDate() - i);
+
+    const key = getDateKey(d);
+
+    days.push({
+      label: weekdayNames[d.getDay()],
+      minutes: stats.history[key] || 0
+    });
+  }
+
+  const max =
+    Math.max(
+      1,
+      ...days.map(d => d.minutes)
+    );
+
+  days.forEach(d=>{
+
+    const height =
+      (d.minutes / max) * 120;
+
+    graph.innerHTML += `
+  <div style="
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    flex:1;
+  ">
+
+    <div style="
+      width:28px;
+      height:${height}px;
+      background:#4caf50;
+      border-radius:8px 8px 0 0;
+    "></div>
+
+    <div style="
+      font-size:11px;
+      margin-top:6px;
+    ">
+      ${d.label}
+    </div>
+
+    <div style="
+      font-size:10px;
+      opacity:.7;
+    ">
+      ${Math.round(d.minutes)}m
+    </div>
+
+  </div>
+`;
+  });
+const todayKey = getTodayKey();
+
+console.log("Today key:", todayKey);
+console.log("Minutes today:", stats.history[todayKey]);
+}
+const badges = [
+
+  { xp: 0,    name: "🎻 Beginner" },
+  { xp: 1000,  name: "🎵 Daily Player" },
+  { xp: 2000,  name: "🎯 Focused Musician" },
+  { xp: 3500,  name: "🔥 Practice Streaker" },
+  { xp: 5000, name: "🎼 Ensemble Ready" },
+  { xp: 10000, name: "🏆 Principal Viola" },
+  { xp: 30000, name: "👑 Viola Master" }
+
+];
+function getCurrentBadge(){
+
+  let current = badges[0];
+
+  badges.forEach(badge => {
+
+    if(stats.xp >= badge.xp){
+      current = badge;
+    }
+
+  });
+
+  return current.name;
+}
+function toggleFingerboardFullscreen(){
+
+  const board =
+    document.getElementById("fingerboard");
+
+  if(!document.fullscreenElement){
+
+    board.requestFullscreen();
+
+  } else {
+
+    document.exitFullscreen();
+  }
+}
+songs.forEach(song => {
+  if(song.favorite === undefined){
+    song.favorite = false;
+  }
+});
+function addSong(){
+
+  const name =
+    prompt("Song name");
+
+  const pdf =
+    prompt("PDF path");
+
+  if(!name || !pdf) return;
+
+  songs.push({
+    name,
+    difficulty: 1,
+    notes: "",
+    sheetMusicUrl: pdf,
+    favorite:false
+  });
+
+  localStorage.setItem(
+    "songs",
+    JSON.stringify(songs)
+  );
+
+  renderSongs();
+}
+function fullscreenPDF(){
+
+  const frame =
+    document.getElementById("sheetFrame");
+
+  if(!document.fullscreenElement){
+
+    frame.requestFullscreen();
+
+  } else {
+
+    document.exitFullscreen();
+
+  }
+}
+function openPDFFullscreen(){
+
+  const frame =
+    document.getElementById("sheetFrame");
+
+  window.open(frame.src, "_blank");
+}
+
+window.addEventListener("load", ()=>{
+
+  setTimeout(()=>{
+
+    const splash =
+      document.getElementById("splashScreen");
+
+    splash.style.opacity = "0";
+
+    setTimeout(()=>{
+      splash.remove();
+    },800);
+
+  },2000);
+
+});
+</script>
+</body>
+</html>
