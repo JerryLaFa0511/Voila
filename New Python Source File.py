@@ -1,6 +1,7 @@
 {
   "name": "VOÌLA",
   "short_name": "VOÌLA",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
